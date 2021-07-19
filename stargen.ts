@@ -1,4 +1,4 @@
-import * as flags from "https://deno.land/std/flags/mod.ts";
+import * as flags from "https://deno.land/std@0.101.0/flags/mod.ts";
 import { readCSVObjects } from "https://deno.land/x/csv@v0.5.1/mod.ts";
 import { Star, starToStc, stcToString } from "./stc.ts";
 
