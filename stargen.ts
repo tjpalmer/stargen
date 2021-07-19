@@ -1,3 +1,4 @@
+import * as flags from "https://deno.land/std/flags/mod.ts";
 import { readCSVObjects } from "https://deno.land/x/csv@v0.5.1/mod.ts";
 import { Star, starToStc, stcToString } from "./stc.ts";
 
@@ -29,7 +30,11 @@ function csvToStar(row: CsvStar): Star {
 }
 
 async function main() {
-  const file = await Deno.open("./starmap.csv");
+  const args = flags.parse(Deno.args);
+  if (!args.input) {
+    throw new Error(`missing --input file`);
+  }
+  const file = await Deno.open(args.input);
   try {
     let id = 0;
     for await (const row of readCSVObjects(file)) {
