@@ -60,6 +60,13 @@ export function starToStc(star: Star, id: number): Stc {
   if (id < 0 || id > 300e3) {
     throw new Error(`bad id: ${id}`);
   }
+  if (star.name.includes('"')) {
+    throw new Error(`bad name: ${star.name}`);
+  }
+  const spectralType = star.starClass + star.starType;
+  if (spectralType.includes('"')) {
+    throw new Error(`bad spectralType: ${spectralType}`);
+  }
   const offsetLy = { x: 0, y: 0, z: 25e3 } as Point;
   const pos = pointAdd(pointScale(star.posParsec, parsec.ly), offsetLy);
   const planarDistance = norm2d(pos.x, pos.y);
@@ -72,9 +79,22 @@ export function starToStc(star: Star, id: number): Stc {
     id: id + 300e3,
     name: star.name,
     radiusKm: star.diameterSun * sun.diameterKm / 2,
-    rightAscensionDeg: radToDeg(rightAscensionRad),
+    rightAscensionDeg: (radToDeg(rightAscensionRad) + 360) % 360,
     spectralType: star.starClass + star.starType,
   };
+}
+
+export function stcToString(stc: Stc): string {
+  return [
+    `${stc.id} "${stc.name}" {`,
+    `  RA ${stc.rightAscensionDeg}`,
+    `  Dec ${stc.declinationDeg}`,
+    `  Distance ${stc.distanceLy}`,
+    `  SpectralType "${stc.spectralType}"`,
+    `  AbsMag ${stc.absMag}`,
+    `  Radius ${stc.radiusKm}`,
+    "}",
+  ].join("\n");
 }
 
 const parsec = {
