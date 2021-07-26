@@ -19,15 +19,18 @@ def load_stars(*, path: str) -> pd.DataFrame:
         input_stream.readinto(header)
         assert header.version == 0x100
         content = input_stream.read()
-    data = np.frombuffer(content, dtype=[
-        ("id", "<u4"),
-        ("x", "<f4"),
-        ("y", "<f4"),
-        ("z", "<f4"),
-        ("mag", "<i2"),
-        ("sl", "u1"),
-        ("kt", "u1"),
-    ])
+    data = np.frombuffer(
+        content,
+        dtype=[
+            ("id", "<u4"),
+            ("x", "<f4"),
+            ("y", "<f4"),
+            ("z", "<f4"),
+            ("mag", "<i2"),
+            ("sl", "u1"),
+            ("kt", "u1"),
+        ],
+    )
     assert header.len == data.shape[0]
     frame = pd.DataFrame(columns=data.dtype.names, data=data)
     frame["mag"] /= 256
