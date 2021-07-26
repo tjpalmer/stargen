@@ -32,11 +32,19 @@ def run(*, input: str):
         ("y", "<f4"),
         ("z", "<f4"),
         ("mag", "<i2"),
-        ("class", "<u2"),
+        ("sl", "u1"),
+        ("kt", "u1"),
     ])
     assert header.len == data.shape[0]
     frame = pd.DataFrame(columns=data.dtype.names, data=data)
+    frame["mag"] /= 256
+    frame["kind"] = frame["kt"] // 16
+    frame["type"] = frame["kt"] % 16
+    frame["subtype"] = frame["sl"] // 16
+    frame["lum"] = frame["sl"] % 16
+    frame.drop(columns=["sl", "kt"], inplace=True)
     print(frame)
+    print(frame.dtypes)
 
 
 if __name__ == "__main__":
