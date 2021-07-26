@@ -13,15 +13,8 @@ class Header(ctypes.LittleEndianStructure):
     ]
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input")
-    args = parser.parse_args()
-    run(**args.__dict__)
-
-
-def run(*, input: str):
-    with open(input, "rb") as input_stream:
+def load_stars(*, path: str) -> pd.DataFrame:
+    with open(path, "rb") as input_stream:
         header = Header()
         input_stream.readinto(header)
         assert header.version == 0x100
@@ -43,8 +36,22 @@ def run(*, input: str):
     frame["subtype"] = frame["sl"] // 16
     frame["lum"] = frame["sl"] % 16
     frame.drop(columns=["sl", "kt"], inplace=True)
-    print(frame)
-    print(frame.dtypes)
+    return frame
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", required=True)
+    parser.add_argument("--output", required=True)
+    args = parser.parse_args()
+    run(**args.__dict__)
+
+
+def run(*, input: str, output: str):
+    stars = load_stars(path=input)
+    print(stars)
+    print(stars.dtypes)
+    stars.to_csv(index=None, path_or_buf=output)
 
 
 if __name__ == "__main__":
