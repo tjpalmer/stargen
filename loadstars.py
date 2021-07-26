@@ -1,5 +1,7 @@
 import argparse
 import ctypes
+import numpy as np
+import pandas as pd
 
 
 class Header(ctypes.LittleEndianStructure):
@@ -22,11 +24,19 @@ def run(*, input: str):
     with open(input, "rb") as input_stream:
         header = Header()
         input_stream.readinto(header)
-        print(header.version)
-        print(header.len)
-        rest = input_stream.read()
-        print(len(rest) / 20)
-        print(rest.__class__)
+        assert header.version == 0x100
+        content = input_stream.read()
+    data = np.frombuffer(content, dtype=[
+        ("id", "<u4"),
+        ("x", "<f4"),
+        ("y", "<f4"),
+        ("z", "<f4"),
+        ("mag", "<i2"),
+        ("class", "<u2"),
+    ])
+    assert header.len == data.shape[0]
+    frame = pd.DataFrame(columns=data.dtype.names, data=data)
+    print(frame)
 
 
 if __name__ == "__main__":
