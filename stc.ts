@@ -67,7 +67,9 @@ export function starToStc(star: Star, id: number): Stc {
   if (spectralType.includes('"')) {
     throw new Error(`bad spectralType: ${spectralType}`);
   }
-  const offsetLy = { x: 0, y: 0, z: 25e3 } as Point;
+  // 100 kly away shrinks the milky way some and gives distance errors between
+  // stars of about 0.01 ly.
+  const offsetLy = { x: 0, y: 0, z: 100e3 } as Point;
   const pos = pointAdd(pointScale(star.posParsec, parsec.ly), offsetLy);
   const planarDistance = norm2d(pos.x, pos.y);
   const declinationRad = Math.atan(pos.z / planarDistance);
