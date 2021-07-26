@@ -33,7 +33,7 @@ def load_stars(*, path: str) -> pd.DataFrame:
     frame["mag"] /= 256
     frame["kind"] = frame["kt"] // 16
     frame["type"] = frame["kt"] % 16
-    frame["subtype"] = frame["sl"] // 16
+    frame["sub"] = frame["sl"] // 16
     frame["lum"] = frame["sl"] % 16
     frame.drop(columns=["sl", "kt"], inplace=True)
     return frame
